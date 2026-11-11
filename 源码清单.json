@@ -1,7 +1,7 @@
 {
   "product": "沈知微",
   "version": "1.0.0",
-  "generatedAt": "2026-11-11T14:18:23.894Z",
+  "generatedAt": "2026-11-11T14:24:47.747Z",
   "files": [
     {
       "file": ".gitattributes",
@@ -10,8 +10,8 @@
     },
     {
       "file": ".github/workflows/windows-tests.yml",
-      "bytes": 976,
-      "sha256": "c707637e07bb18cf111ccacdab043470066d00a7cd1538cd32baea2209152d5b"
+      "bytes": 983,
+      "sha256": "3bc1c28512eeebd951d060667e28edf2d8b27d3de5cf0bd3b049342f5f8a922a"
     },
     {
       "file": ".gitignore",
