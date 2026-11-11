@@ -1,12 +1,17 @@
 {
   "product": "沈知微",
   "version": "1.0.0",
-  "generatedAt": "2026-11-11T14:05:52.552Z",
+  "generatedAt": "2026-11-11T14:18:23.894Z",
   "files": [
     {
+      "file": ".gitattributes",
+      "bytes": 21,
+      "sha256": "00effbf7e7b1b27fa93c82b9d0383ed42a74127cd372a2b606de3b30031d418e"
+    },
+    {
       "file": ".github/workflows/windows-tests.yml",
-      "bytes": 749,
-      "sha256": "a811a0612d040c070f65d54f6e8ffb03848ddcdef85d3daa9e9a0e1ccca08a8a"
+      "bytes": 976,
+      "sha256": "c707637e07bb18cf111ccacdab043470066d00a7cd1538cd32baea2209152d5b"
     },
     {
       "file": ".gitignore",
@@ -295,8 +300,8 @@
     },
     {
       "file": "scripts/package-release.mjs",
-      "bytes": 3595,
-      "sha256": "8db2198c515fe9bd85b6a6209c42ec3f9ad65941478629e6190f3e583e615e00"
+      "bytes": 3631,
+      "sha256": "281f15abecacb090e75df8352ef351f03142f921d1fd7b8ff05104232ca63c84"
     },
     {
       "file": "scripts/start-background.ps1",
@@ -997,6 +1002,11 @@
       "file": "test/workbench.test.js",
       "bytes": 29257,
       "sha256": "39c5a63eee55354797835b8b683eb0331e56f8e17a9685fd4269a9c5735f2124"
+    },
+    {
+      "file": "一键验收.bat",
+      "bytes": 272,
+      "sha256": "d18898838271afea2d0af831e98f60fc5fab21729a569c93b43b7ddd24f9dc2d"
     }
   ]
 }

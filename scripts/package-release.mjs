@@ -10,7 +10,7 @@ const out=path.resolve(process.argv[2]||path.join(root,'work','release'));
 await mkdir(out,{recursive:true});
 const pkg=JSON.parse(await readFile(path.join(root,'package.json'),'utf8'));
 const {stdout}=await exec('git',['ls-files','-z','--cached','--others','--exclude-standard'],{cwd:root,encoding:'utf8',maxBuffer:8*1024*1024,windowsHide:true});
-const rootFiles=new Set(['README.md','LICENSE','CONTRIBUTING.md','SECURITY.md','package.json','package-lock.json','.gitignore','start.bat','open-zhiwei.vbs']);
+const rootFiles=new Set(['README.md','LICENSE','CONTRIBUTING.md','SECURITY.md','package.json','package-lock.json','.gitignore','.gitattributes','start.bat','open-zhiwei.vbs','一键验收.bat']);
 const selected=[...new Set(stdout.split('\0').filter(Boolean))].filter(file=>rootFiles.has(file)||/^(src|public|test|scripts|docs|\.github)\//.test(file)).sort();
 const forbidden=/(^|\/)(data|node_modules|recordings|voiceprints|\.git)(\/|$)|\.(wav|pcm|mp3|m4a|flac|ogg|opus|webm|onnx|bin|dll|pdb|sqlite|db|key|pem|p12|pfx|token)(-|\.|$)|(^|\/)(\.env(?:\..*)?|auth\.json|credentials\.json|secrets\.json|tokens\.json)$/i;
 const privateKey=/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\bgh[pousr]_[A-Za-z0-9]{25,}|\bgithub_pat_[A-Za-z0-9_]{30,}|\bsk-[A-Za-z0-9]{28,}/;

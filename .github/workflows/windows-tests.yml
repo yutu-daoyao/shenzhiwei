@@ -22,6 +22,9 @@ jobs:
       - name: 运行离线测试
         shell: pwsh
         run: |
+          # Windows runner 的 TEMP 可能使用 8.3 别名；路径校验要求实际目录。
+          $env:TEMP = (& node -p "require('node:fs').realpathSync(require('node:os').tmpdir())")
+          $env:TMP = $env:TEMP
           $files=((Get-Content package.json -Raw | ConvertFrom-Json).scripts.test -split ' ') | Select-Object -Skip 2
           & node --test --test-concurrency=3 @files
           exit $LASTEXITCODE
