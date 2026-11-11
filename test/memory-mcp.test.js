@@ -1,0 +1,30 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import readline from 'node:readline';
+import { once } from 'node:events';
+
+test('memory MCP stdio initialize, tools and remember/search/forget', { timeout: 10000 }, async t => {
+  const dir = await mkdtemp(path.join(tmpdir(), 'zhiwei-memory-mcp-'));
+  const child = spawn(process.execPath, ['src/memory/mcp-server.js'], { env: { ...process.env, ZHIWEI_MEMORY_DB: path.join(dir, 'custom.sqlite') }, stdio: ['pipe', 'pipe', 'pipe'] });
+  const lines = readline.createInterface({ input: child.stdout });
+  const pending = new Map(); let id = 0;
+  lines.on('line', line => { const message = JSON.parse(line); pending.get(message.id)?.(message); pending.delete(message.id); });
+  t.after(async () => { if (child.exitCode === null && child.signalCode === null) { const exited = once(child, 'exit'); child.stdin.end(); child.kill(); await exited; } lines.close(); await rm(dir, { recursive: true, force: true }); });
+  const request = (method, params = {}) => new Promise(resolve => { const timer = setTimeout(() => resolve({ error: { message: 'MCP response timeout' } }), 2000); pending.set(++id, message => { clearTimeout(timer); resolve(message); }); child.stdin.write(JSON.stringify({ jsonrpc: '2.0', id, method, params }) + '\n'); });
+  const call = async (name, args = {}) => { const response = await request('tools/call', { name, arguments: args }); assert.equal(response.error, undefined); return JSON.parse(response.result.content[0].text); };
+  assert.equal((await request('initialize', { protocolVersion: '2024-11-05' })).result.serverInfo.name, 'zhiwei-memory');
+  assert.deepEqual((await request('ping')).result, {});
+  assert.equal((await request('tools/list')).result.tools.length, 6);
+  const memory = await call('memory_remember', { text: '喜欢绿茶', tags: ['饮品'] });
+  assert.equal((await call('memory_search', { query: '饮品' }))[0].text, '喜欢绿茶');
+  await call('memory_set_preference', { key: '语言', value: '中文' });
+  assert.equal((await call('memory_list_preferences'))[0].value, '中文');
+  assert.deepEqual(await call('memory_recent_tasks'), []);
+  assert.equal(await call('memory_forget', { id: memory.id }), 1);
+  assert.deepEqual(await call('memory_search', { query: '饮品' }), []);
+  assert.ok((await request('tools/call', { name: 'missing' })).error);
+});

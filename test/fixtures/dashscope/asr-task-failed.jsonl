@@ -1,0 +1,4 @@
+{"direction":"receive","offsetMs":0,"event":"open"}
+{"direction":"send","offsetMs":0,"text":"{\"header\":{\"action\":\"run-task\",\"task_id\":\"01234567-89ab-4cde-8fab-0123456789ab\",\"streaming\":\"duplex\"},\"payload\":{\"task_group\":\"audio\",\"task\":\"asr\",\"function\":\"recognition\",\"model\":\"paraformer-realtime-v2\",\"parameters\":{\"format\":\"pcm\",\"sample_rate\":16000,\"language_hints\":[\"zh\"]},\"input\":{}}}"}
+{"direction":"receive","offsetMs":2,"text":"{\"header\":{\"task_id\":\"01234567-89ab-4cde-8fab-0123456789ab\",\"event\":\"task-failed\",\"error_code\":\"InvalidParameter\",\"error_message\":\"Invalid model\"},\"payload\":{}}"}
+{"direction":"send","offsetMs":2,"event":"close"}

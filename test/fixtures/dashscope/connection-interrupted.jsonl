@@ -1,0 +1,8 @@
+{"direction":"receive","offsetMs":0,"event":"open"}
+{"direction":"send","offsetMs":0,"text":"{\"header\":{\"action\":\"run-task\",\"task_id\":\"01234567-89ab-4cde-8fab-0123456789ab\",\"streaming\":\"duplex\"},\"payload\":{\"task_group\":\"audio\",\"task\":\"tts\",\"function\":\"SpeechSynthesizer\",\"model\":\"cosyvoice-v2\",\"parameters\":{\"text_type\":\"PlainText\",\"voice\":\"longxiaochun_v2\",\"format\":\"pcm\",\"sample_rate\":16000},\"input\":{}}}"}
+{"direction":"receive","offsetMs":2,"text":"{\"header\":{\"task_id\":\"01234567-89ab-4cde-8fab-0123456789ab\",\"event\":\"task-started\"},\"payload\":{}}"}
+{"direction":"send","offsetMs":2,"text":"{\"header\":{\"action\":\"continue-task\",\"task_id\":\"01234567-89ab-4cde-8fab-0123456789ab\",\"streaming\":\"duplex\"},\"payload\":{\"input\":{\"text\":\"你好，知微。\"}}}"}
+{"direction":"send","offsetMs":2,"text":"{\"header\":{\"action\":\"finish-task\",\"task_id\":\"01234567-89ab-4cde-8fab-0123456789ab\",\"streaming\":\"duplex\"},\"payload\":{\"input\":{}}}"}
+{"direction":"receive","offsetMs":4,"binaryBase64":"AQACAAMA"}
+{"direction":"receive","offsetMs":6,"event":"close","code":1006}
+{"direction":"send","offsetMs":6,"event":"close"}

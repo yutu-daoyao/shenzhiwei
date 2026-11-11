@@ -1,0 +1,33 @@
+{
+  "name": "shenzhiwei",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node src/main.js",
+    "acceptance": "node scripts/acceptance.js",
+    "test": "node --test test/live-guard.test.js test/desktop.test.js test/acp.test.js test/agent-desktop.test.js test/acceptance.test.js test/memory.test.js test/memory-api.test.js test/memory-view.test.js test/memory-mcp.test.js test/client.test.js test/orchestrator.test.js test/windows.test.js test/files.test.js test/approval-view.test.js test/mcp.test.js test/process.test.js test/tools.test.js test/storage.test.js test/computer-unit.test.js test/skills.test.js test/mcp-discovery.test.js test/http-guards.test.js test/voice.test.js test/voice-ptt.test.js test/voice-ptt-api.test.js test/dashscope-voice.test.js test/voice-conversation.test.js test/voice-audio.test.js test/wake.test.js test/tray.test.js test/conversation-export.test.js test/browser-actions.test.js test/realtime.test.js test/models.test.js test/browser-audio.test.js test/bailian-browser-lifecycle.test.js test/orb.test.js test/voice-level.test.js test/orb-capture.test.js test/orb-audio.test.js test/launcher.test.js test/audio-check.test.js test/projects-captions.test.js test/caption-playback.test.js test/local-captions.test.js test/dashboard-weather.test.js test/task-scene.test.js test/live-workspace.test.js test/workbench.test.js test/bageshuo-asr.test.js test/voiceprint.test.js test/voiceprint-http.test.js test/voiceprint-view.test.js test/shared-memory.test.js",
+    "test:live": "node scripts/live-test.js",
+    "test:browser": "node scripts/browser-live-test.js",
+    "test:computer": "node scripts/computer-live-test.js",
+    "test:voice": "node scripts/voice-live-test.js",
+    "test:voice:offline": "node --test test/voice.test.js test/voice-ptt.test.js test/voice-ptt-api.test.js test/dashscope-voice.test.js test/voice-conversation.test.js test/voice-audio.test.js test/wake.test.js test/browser-audio.test.js",
+    "test:resident:offline": "node --test test/wake.test.js test/tray.test.js",
+    "test:voice:browser": "node --test test/browser-audio.test.js test/bailian-browser-lifecycle.test.js",
+    "package:release": "node scripts/package-release.mjs"
+  },
+  "dependencies": {
+    "sherpa-onnx-node": "2.0.1",
+    "ws": "^8.22.1"
+  },
+  "description": "沈知微：语音优先的 Windows 个人助理与多 Agent 调度工作台",
+  "license": "MIT",
+  "author": "yutu-daoyao",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yutu-daoyao/shenzhiwei.git"
+  }
+}

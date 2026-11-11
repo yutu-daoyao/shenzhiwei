@@ -1,0 +1,27 @@
+name: Windows 自动测试
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    name: 本机能力与离线回归
+    runs-on: windows-latest
+    steps:
+      - name: 读取源码
+        uses: actions/checkout@v7
+      - name: 配置 Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: 安装锁定依赖
+        run: npm ci --ignore-scripts
+      - name: 运行离线测试
+        shell: pwsh
+        run: |
+          $files=((Get-Content package.json -Raw | ConvertFrom-Json).scripts.test -split ' ') | Select-Object -Skip 2
+          & node --test --test-concurrency=3 @files
+          exit $LASTEXITCODE

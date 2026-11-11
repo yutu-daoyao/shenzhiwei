@@ -1,0 +1,62 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { openMemory } from '../src/memory/store.js';
+
+test('memory CRUD, literal search, caps, context and persistence across connections', async t => {
+  const dir = await mkdtemp(path.join(tmpdir(), 'zhiwei-memory-'));
+  const store = await openMemory(dir);
+  const other = await openMemory(dir);
+  t.after(async () => { other.close(); store.close(); await rm(dir, { recursive: true, force: true }); });
+  assert.equal(store.db.prepare('PRAGMA journal_mode').get().journal_mode, 'wal');
+  assert.equal(store.db.prepare('PRAGMA busy_timeout').get().timeout, 5000);
+  store.setPreference('语言', '英文'); store.setPreference('语言', '中文');
+  assert.equal(other.getPreferences()[0].value, '中文');
+  const fact = store.remember('用户喜欢茶', ['饮品']);
+  const duplicate = other.remember('用户喜欢茶', ['偏好', '饮品']);
+  assert.equal(duplicate.id, fact.id);
+  assert.equal(store.search('用户喜欢茶').length, 1);
+  assert.deepEqual(new Set(duplicate.tags.split(',')), new Set(['饮品', '偏好']));
+  assert.notEqual(store.remember('用户喜欢茶', '', 'note').id, fact.id);
+  store.remember('100% 完成', '', 'note');
+  assert.equal(store.search('饮品')[0].id, fact.id);
+  assert.equal(store.search('%').length, 1);
+  assert.equal(store.search('', 1).length, 1);
+  assert.equal(store.search('', -1).length, 0);
+  assert.throws(() => store.remember('x', '', 'invalid'));
+  assert.throws(() => store.remember(''));
+  assert.equal(store.remember('x'.repeat(3000)).text.length, 2000);
+  for (let i = 0; i < 7; i++) store.recordTask({ threadId: 't', turnId: `${i}`, request: `任务${i}`, outcome: '好'.repeat(700), status: 'completed' });
+  assert.equal(store.recentTasks().length, 5);
+  assert.equal(store.recentTasks(1)[0].turnId, '6');
+  assert.equal(store.recentTasks(1)[0].outcome.length, 500);
+  const summary = store.contextSummary();
+  assert.match(summary, /中文/); assert.match(summary, /用户喜欢茶/); assert.match(summary, /任务6/);
+  assert.ok(summary.length <= 1500); assert.equal(store.contextSummary(13).length, 13);
+  assert.equal(store.forget(fact.id), 1); assert.equal(other.search('饮品').length, 0);
+  assert.equal(store.deletePreference('语言'), 1); assert.equal(store.getPreferences().length, 0);
+});
+
+test('repeated memory merges tags across connections, refreshes recency and preserves kind', async t => {
+  const dir = await mkdtemp(path.join(tmpdir(), 'zhiwei-dedup-'));
+  const store = await openMemory(dir), other = await openMemory(dir);
+  t.after(() => { other.close(); store.close(); });
+  const original = store.remember('用户喜欢茶', ['饮品', '偏好']);
+  store.remember('用户住在上海');
+  store.db.prepare('UPDATE memories SET updatedAt=?').run('2000-01-01');
+  const updated = other.remember(' 用户喜欢茶 ', ['偏好', ' 中文 ']);
+  assert.equal(updated.id, original.id); assert.equal(updated.createdAt, original.createdAt);
+  assert.equal(updated.tags, '饮品,偏好,中文');
+  assert.equal(store.search().length, 2); assert.equal(store.search()[0].id, original.id);
+  assert.equal(store.listEntries().entries[0].id, original.id);
+  assert.match(store.contextSummary(), /用户喜欢茶/);
+  assert.notEqual(store.remember('用户喜欢茶', '', 'note').id, original.id);
+  assert.equal(other.forget(original.id), 1); assert.equal(store.search('饮品').length, 0);
+  // An insertion failure rolls the transaction back and leaves the connection usable.
+  store.db.exec("CREATE TRIGGER reject_memory BEFORE INSERT ON memories BEGIN SELECT RAISE(ABORT, 'blocked'); END;");
+  assert.throws(() => store.remember('失败'), /blocked/);
+  store.db.exec('DROP TRIGGER reject_memory');
+  assert.equal(store.remember('恢复').text, '恢复');
+});
